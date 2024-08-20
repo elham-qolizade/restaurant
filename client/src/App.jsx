@@ -1,9 +1,9 @@
-import Cart from "./component/Cart";
+import MenuList from "./component/MenuList";
 
 function App() {
   return (
     <>
-      <Cart />
+      <MenuList />
     </>
   );
 }

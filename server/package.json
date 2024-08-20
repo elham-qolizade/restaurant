@@ -5,13 +5,16 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "dev":"nodemon "
+    "dev": "nodemon "
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-
+    "cors": "^2.8.5",
     "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^8.4.1"
   }
 }
