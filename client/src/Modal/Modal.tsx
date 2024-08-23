@@ -1,32 +1,23 @@
-import empty from "../assets/image/illustration-empty-cart.svg";
-import React, { useContext, useState } from "react";
-import { CartContext } from "../shared/context/cart-context";
-import CartModal from "../Modal/Modal";
+import React, { useState } from "react";
 
-const Cart: React.FC = () => {
-  const [cartItems, setCartItems] = useContext(CartContext);
+const CartModal = ({ cartItems, onClose }) => {
+  const [showModal, setShowModal] = useState(false);
 
-  const handleClearCart = () => {
-    setCartItems([]);
+  const handleOrder = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    onClose();
   };
 
   return (
-    <div className="py-10">
-      {cartItems.length === 0 ? (
-        <article className="px-20 py-10 bg-white rounded-md">
-          <h2 className="p-2 mb-4 text-2xl font-bold text-red-500">
-            Your cart <span>({cartItems.length})</span>
-          </h2>
-          <img src={empty} alt="" />
-          <p className="text-center text-brown-500">
-            Your added items will appear here
-          </p>
-        </article>
-      ) : (
-        <article className="p-4 px-20 bg-white rounded-md">
-          <h3 className="mb-4 text-2xl font-bold text-red-500">
-            Your Cart <span>({cartItems.length})</span>
-          </h3>
+    <div className={`modal ${showModal ? "show" : "hide"}`}>
+      {showModal && (
+        <div className="absolute z-20 max-w-xl px-4 pt-10 bg-white inset-x-56 modal-content top-24 rounded-t-2xl">
+          <h2 className="text-4xl font-bold ">Order confirmed</h2>
+          <p className="mb-5">We hope you enjoy your food!</p>
           <ul className="px-10">
             {cartItems
               .reduce((uniqueItems, item) => {
@@ -47,11 +38,12 @@ const Cart: React.FC = () => {
                 return (
                   <li
                     key={index}
-                    className="pb-4 mb-4 border-b border-brown-100"
+                    className="pb-4 mb-4 border-b bg-red-50 border-brown-100"
                   >
                     <span className="block mb-2 text-brown-900">
                       {uniqueItem.name}
                     </span>
+                    <img src={uniqueItem.img} alt="" />
                     <span>{itemCount}x</span>
                     <span className="ml-4 font-light text-brown-500">
                       @ ${uniqueItem.price}
@@ -67,11 +59,22 @@ const Cart: React.FC = () => {
               ${cartItems.reduce((total, item) => total + item.price, 0)}
             </p>
           </div>
-          <CartModal onClose={handleClearCart} cartItems={cartItems} />
-        </article>
+          <button
+            className="block w-64 mx-auto my-4 bg-red-500 md:w-full h-14 rounded-3xl"
+            onClick={handleCloseModal}
+          >
+            Start New order
+          </button>
+        </div>
       )}
+      <button
+        onClick={handleOrder}
+        className="block w-64 mx-auto my-4 text-white bg-red-500 md:w-full h-14 rounded-3xl"
+      >
+        Confirm Order
+      </button>
     </div>
   );
 };
 
-export default Cart;
+export default CartModal;
