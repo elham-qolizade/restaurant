@@ -1,13 +1,19 @@
-import empty from "../assets/image/illustration-empty-cart.svg";
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { CartContext } from "../shared/context/cart-context";
 import CartModal from "../Modal/Modal";
+import empty from "../assets/image/illustration-empty-cart.svg";
+import Delete from "../assets/icon-remove-item.svg";
 
 const Cart: React.FC = () => {
   const [cartItems, setCartItems] = useContext(CartContext);
 
   const handleClearCart = () => {
     setCartItems([]);
+  };
+  const handleDeleteItems = (index: number) => {
+    const updatedCartItems = [...cartItems];
+    updatedCartItems.splice(index, 1);
+    setCartItems(updatedCartItems);
   };
 
   return (
@@ -28,43 +34,31 @@ const Cart: React.FC = () => {
             Your Cart <span>({cartItems.length})</span>
           </h3>
           <ul className="px-10">
-            {cartItems
-              .reduce((uniqueItems, item) => {
-                if (
-                  !uniqueItems.some(
-                    (uniqueItem) => uniqueItem.name === item.name
-                  )
-                ) {
-                  uniqueItems.push(item);
-                }
-                return uniqueItems;
-              }, [])
-              .map((uniqueItem, index) => {
-                const itemCount = cartItems.filter(
-                  (cartItem) => cartItem.name === uniqueItem.name
-                ).length;
-
-                return (
-                  <li
-                    key={index}
-                    className="pb-4 mb-4 border-b border-brown-100"
-                  >
-                    <span className="block mb-2 text-brown-900">
-                      {uniqueItem.name}
-                    </span>
-                    <span>{itemCount}x</span>
-                    <span className="ml-4 font-light text-brown-500">
-                      @ ${uniqueItem.price}
-                      <b className="ml-1">${itemCount * uniqueItem.price}</b>
-                    </span>
-                  </li>
-                );
-              })}
+            {cartItems.map((item, index) => (
+              <li key={index} className="pb-4 mb-4 border-b border-brown-100">
+                <span className="block mb-2 text-brown-900">{item.name}</span>
+                <span>{item.quantity}x</span>
+                <span className="ml-4 font-light text-brown-500">
+                  @ ${item.price}
+                  <b className="ml-1">${item.quantity * item.price}</b>
+                </span>
+                <button
+                  className="  inline-flex justify-center items-center text-brown-500 border border-brown-500 rounded-full w-5 h-5 float-right"
+                  onClick={() => handleDeleteItems(index)}
+                >
+                  <img src={Delete} alt="" />
+                </button>
+              </li>
+            ))}
           </ul>
           <div className="flex flex-row items-center justify-between">
             <p className="text-sm">Order Total:</p>
             <p className="text-2xl font-bold text-brown-900">
-              ${cartItems.reduce((total, item) => total + item.price, 0)}
+              $
+              {cartItems.reduce(
+                (total, item) => total + item.price * item.quantity,
+                0
+              )}
             </p>
           </div>
           <CartModal onClose={handleClearCart} cartItems={cartItems} />
@@ -73,5 +67,4 @@ const Cart: React.FC = () => {
     </div>
   );
 };
-
 export default Cart;
