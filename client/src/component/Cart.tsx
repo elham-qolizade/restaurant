@@ -5,10 +5,7 @@ import empty from "../assets/image/illustration-empty-cart.svg";
 import Delete from "../assets/icon-remove-item.svg";
 
 const Cart: React.FC = () => {
-  const { cartItems, setCartItems } = useContext<{
-    cartItems: Array<any>;
-    setCartItems: Function;
-  }>(CartContext);
+  const [cartItems, setCartItems] = useContext(CartContext);
 
   const handleClearCart = () => {
     setCartItems([]);
