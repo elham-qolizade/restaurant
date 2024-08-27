@@ -1,4 +1,4 @@
-import Cart from "./component/Cart";
+import React from "react";
 import MenuList from "./component/MenuList";
 import CartProvider from "./shared/context/cart-context";
 

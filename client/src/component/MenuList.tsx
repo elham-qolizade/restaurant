@@ -63,14 +63,14 @@ const MenuList: React.FC = () => {
   return (
     <>
       <div className="container py-16">
-        <div className="flex lg:flex-row flex-col justify-center gap-10">
+        <div className="flex flex-col justify-center gap-10 lg:flex-row">
           <section>
             <h1 className="mb-6 text-4xl font-bold text-brown-900">Desserts</h1>
-            <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-6">
+            <div className="grid gap-6 lg:grid-cols-3 md:grid-cols-3 sm:grid-cols-1">
               {products.map((product) => (
                 <div key={product.name}>
                   <img
-                    className={`rounded-2xl max-w-60 ${
+                    className={`rounded-2xl  w-full lg:max-w-60 ${
                       cartItems.some((item) => item.name === product.name)
                         ? "border-2 border-red-500"
                         : "border-2 border-transparent"
@@ -81,13 +81,13 @@ const MenuList: React.FC = () => {
                   {!cartItems.some((item) => item.name === product.name) ? (
                     <button
                       onClick={() => addToCart(product.name, product.price)}
-                      className="relative  bottom-5 z-10 flex px-6 py-2 mx-auto bg-white border border-brown-400 rounded-3xl"
+                      className="relative z-10 flex px-6 py-2 mx-auto bg-white border bottom-5 border-brown-400 rounded-3xl"
                     >
                       <img src={addToCartImg} alt="" />
                       Add to cart
                     </button>
                   ) : (
-                    <div className="relative z-10 bottom-5 flex flex-row items-center justify-around w-40 h-10 mx-auto text-white bg-red-700 rounded-3xl">
+                    <div className="relative z-10 flex flex-row items-center justify-around w-40 h-10 mx-auto text-white bg-red-700 bottom-5 rounded-3xl">
                       <button
                         onClick={() => handleDecrement(product.name)}
                         className="flex items-center justify-center w-5 h-5 border border-white rounded-full"

@@ -5,7 +5,10 @@ import empty from "../assets/image/illustration-empty-cart.svg";
 import Delete from "../assets/icon-remove-item.svg";
 
 const Cart: React.FC = () => {
-  const [cartItems, setCartItems] = useContext(CartContext);
+  const { cartItems, setCartItems } = useContext<{
+    cartItems: Array<any>;
+    setCartItems: Function;
+  }>(CartContext);
 
   const handleClearCart = () => {
     setCartItems([]);
@@ -43,7 +46,7 @@ const Cart: React.FC = () => {
                   <b className="ml-1">${item.quantity * item.price}</b>
                 </span>
                 <button
-                  className="  inline-flex justify-center items-center text-brown-500 border border-brown-500 rounded-full w-5 h-5 float-right"
+                  className="inline-flex items-center justify-center float-right w-5 h-5 border rounded-full text-brown-500 border-brown-500"
                   onClick={() => handleDeleteItems(index)}
                 >
                   <img src={Delete} alt="" />
