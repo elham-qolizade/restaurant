@@ -1,43 +1,71 @@
 import React, { useContext } from "react";
-import { CartContext } from "../shared/context/cart-context";
+import { CartContext, CartContextType } from "../shared/context/cart-context";
 import CartModal from "../Modal/Modal";
-import empty from "../assets/image/illustration-empty-cart.svg";
-import Delete from "../assets/icon-remove-item.svg";
+import Empty from "../assets/image/illustration-empty-cart.svg";
+import Delete from "../assets/image/icon-remove-item.svg";
+import { useTranslation } from "react-i18next";
+import { useDarkMode } from "../shared/context/DarkModeContext";
 
 const Cart: React.FC = () => {
-  const [cartItems, setCartItems] = useContext(CartContext);
+  const { cartItems: cartItemsComponent, setCartItems: setCartItemsComponent } =
+    useContext(CartContext) as CartContextType;
+  const { t, i18n } = useTranslation();
 
+  const changeLanguage = (lng: string) => {
+    console.log(`Changing language to: ${lng}`);
+    i18n.changeLanguage(lng);
+  };
+  const { theme, toggleTheme } = useDarkMode();
   const handleClearCart = () => {
-    setCartItems([]);
+    setCartItemsComponent([]);
   };
   const handleDeleteItems = (index: number) => {
-    const updatedCartItems = [...cartItems];
+    const updatedCartItems = [...cartItemsComponent];
     updatedCartItems.splice(index, 1);
-    setCartItems(updatedCartItems);
+    setCartItemsComponent(updatedCartItems);
   };
 
   return (
-    <div className="py-10">
-      {cartItems.length === 0 ? (
-        <article className="px-20 py-10 bg-white rounded-md">
+    <div
+      className={` max-h-80 ${theme === "dark" ? "bg-gray-800" : "bg-white"}`}
+      style={{ direction: i18n.language === "fa" ? "rtl" : "ltr" }}
+    >
+      {cartItemsComponent.length === 0 ? (
+        <article className="px-20 py-10 rounded-md ">
           <h2 className="p-2 mb-4 text-2xl font-bold text-red-500">
-            Your cart <span>({cartItems.length})</span>
+            {t("cart")}
+            <span>({cartItemsComponent.length})</span>
           </h2>
-          <img src={empty} alt="" />
-          <p className="text-center text-brown-500">
-            Your added items will appear here
-          </p>
+          <Empty />
+          <p className="text-center text-brown-500">{t("paragraph")}</p>
         </article>
       ) : (
-        <article className="p-4 px-20 bg-white rounded-md">
+        <article
+          className={` p-4 px-20  rounded-md ${
+            theme === "dark" ? "bg-gray-800" : "bg-white"
+          }`}
+        >
           <h3 className="mb-4 text-2xl font-bold text-red-500">
-            Your Cart <span>({cartItems.length})</span>
+            {t("cart")}
+            <span>({cartItemsComponent.length})</span>
           </h3>
           <ul className="px-10">
-            {cartItems.map((item, index) => (
+            {cartItemsComponent.map((item, index) => (
               <li key={index} className="pb-4 mb-4 border-b border-brown-100">
-                <span className="block mb-2 text-brown-900">{item.name}</span>
-                <span>{item.quantity}x</span>
+                <span
+                  className={`block mb-2  ${
+                    theme === "dark" ? "text-brown-700" : "text-brown-900"
+                  }`}
+                >
+                  {item.name}
+                </span>
+                <span
+                  className={` ${
+                    theme === "dark" ? "text-brown-400" : "text-black"
+                  }`}
+                >
+                  {item.quantity}x
+                </span>
                 <span className="ml-4 font-light text-brown-500">
                   @ ${item.price}
                   <b className="ml-1">${item.quantity * item.price}</b>
@@ -46,22 +74,32 @@ const Cart: React.FC = () => {
                   className="inline-flex items-center justify-center float-right w-5 h-5 border rounded-full text-brown-500 border-brown-500"
                   onClick={() => handleDeleteItems(index)}
                 >
-                  <img src={Delete} alt="" />
+                  <Delete />
                 </button>
               </li>
             ))}
           </ul>
           <div className="flex flex-row items-center justify-between">
-            <p className="text-sm">Order Total:</p>
-            <p className="text-2xl font-bold text-brown-900">
+            <p
+              className={`text-sm ${
+                theme === "dark" ? "text-brown-700" : "text-black"
+              }`}
+            >
+              {t("OrderTotal")}:
+            </p>
+            <p
+              className={`text-2xl font-bold   ${
+                theme === "dark" ? "text-brown-700" : "text-brown-900"
+              }`}
+            >
               $
-              {cartItems.reduce(
+              {cartItemsComponent.reduce(
                 (total, item) => total + item.price * item.quantity,
                 0
               )}
             </p>
           </div>
-          <CartModal onClose={handleClearCart} cartItems={cartItems} />
+          <CartModal onClose={handleClearCart} cartItems={cartItemsComponent} />
         </article>
       )}
     </div>

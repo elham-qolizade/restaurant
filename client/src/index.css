@@ -2,10 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-
-:root{
-    @apply bg-rose-50
-}
-
-}
+/* index.css (or any other CSS file included in your project) */
+.img-with-border {
+    @apply rounded-lg;
+    @apply max-w-full;
+  }
+  
+  .dark-theme-border {
+    @apply border-2 border-brown-900;
+  }
+  
+  .light-theme-border {
+    @apply border-2 border-red-500;
+  }
