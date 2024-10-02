@@ -15,18 +15,33 @@ import { useTranslation } from "react-i18next";
 import Cart from "./Cart";
 
 const MenuList: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  useEffect(() => {
+    fetch("http://localhost:2043/")
+      .then((response) => response.json())
+      .then((data) => {
+        const updatedProducts = data.map((product) => ({
+          name: { en: product.name_en, fa: product.name_fa },
+          category: { en: product.category_en, fa: product.category_fa },
+          price: product.price,
+          image: product.image,
+        }));
+        setProducts(updatedProducts);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  }, []);
 
+  const { t, i18n } = useTranslation();
   const changeLanguage = (lng: string) => {
     console.log(`Changing language to: ${lng}`);
     i18n.changeLanguage(lng);
   };
-  const { theme, toggleTheme } = useDarkMode();
 
+  const { theme, toggleTheme } = useDarkMode();
   const [products, setProducts] = useState<CartItemType[]>([]);
   const { cartItems: cartItemsComponent, setCartItems: setCartItemsComponent } =
     useContext(CartContext) as CartContextType;
-
   const addToCart = (name: string, price: number) => {
     const newItem: CartItemType = {
       name: name,
@@ -35,6 +50,7 @@ const MenuList: React.FC = () => {
       category: "Category",
       image: "image_url",
     };
+    console.log("name:", name);
 
     setCartItemsComponent((prevState) => [...prevState, newItem]);
   };
@@ -47,34 +63,13 @@ const MenuList: React.FC = () => {
     );
   };
 
-  useEffect(() => {
-    fetch("http://localhost:3220/")
-      .then((response) => response.json())
-      .then((data) => {
-        const updatedProducts = data.map((product) => ({
-          name: { en: product.name_en, fa: product.name_fa },
-          category: product.category,
-          price: product.price,
-          image: product.image,
-        }));
-        setProducts(updatedProducts);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-  }, []);
-
   return (
-    <div
-      className={`min-h-screen  ${
-        theme === "dark" ? "bg-gray-900" : "bg-gray-100"
-      }`}
-    >
+    <div className={` ${theme === "dark" ? "bg-gray-900" : "bg-pink-100"}`}>
       <div className="container">
         <nav className="flex flex-row justify-between pt-5 ">
           <select
             className={`border-brown-900 border  rounded-md ${
-              theme === "dark" ? "bg-gray-900 , text-brown-100" : "bg-gray-100"
+              theme === "dark" ? "bg-gray-900 , text-brown-100" : "bg-white"
             }`}
             value={i18n.language}
             onChange={(e) => changeLanguage(e.target.value)}
@@ -84,7 +79,11 @@ const MenuList: React.FC = () => {
           </select>
 
           <button onClick={toggleTheme}>
-            {theme === "light" ? <MdLightMode /> : <CiLight />}
+            {theme === "light" ? (
+              <MdLightMode />
+            ) : (
+              <CiLight className="text-white " />
+            )}
           </button>
         </nav>
 
@@ -133,7 +132,7 @@ const MenuList: React.FC = () => {
                         className={`relative z-10 flex px-6 py-2 mx-auto  border bottom-5 border-brown-400 rounded-3xl ${
                           theme === "dark"
                             ? "bg-gray-900 , text-brown-300"
-                            : "bg-gray-100"
+                            : "bg-white"
                         }`}
                       >
                         <AddCart />
@@ -168,10 +167,14 @@ const MenuList: React.FC = () => {
                         </button>
                       </div>
                     )}
-                    <h3 className="text-brown-500">{product.category}</h3>
+                    <h3 className="text-brown-500">
+                      {i18n.language === "fa"
+                        ? product.category.fa
+                        : product.category.en}
+                    </h3>
                     <h2 className="text-brown-900">
                       {i18n.language === "fa"
-                        ? product.name.fa
+                        ? product.name?.fa
                         : product.name.en}
                     </h2>
                     <p className="font-semibold text-red-500">
@@ -181,7 +184,7 @@ const MenuList: React.FC = () => {
                 ))}
               </div>
             </section>
-            <Cart />
+            <Cart className="Cart" />
           </div>
         </div>
       </div>

@@ -7,14 +7,15 @@ import { useTranslation } from "react-i18next";
 import { useDarkMode } from "../shared/context/DarkModeContext";
 
 const Cart: React.FC = () => {
-  const { cartItems: cartItemsComponent, setCartItems: setCartItemsComponent } =
-    useContext(CartContext) as CartContextType;
   const { t, i18n } = useTranslation();
 
   const changeLanguage = (lng: string) => {
     console.log(`Changing language to: ${lng}`);
     i18n.changeLanguage(lng);
   };
+  const { cartItems: cartItemsComponent, setCartItems: setCartItemsComponent } =
+    useContext(CartContext) as CartContextType;
+
   const { theme, toggleTheme } = useDarkMode();
   const handleClearCart = () => {
     setCartItemsComponent([]);
@@ -27,11 +28,13 @@ const Cart: React.FC = () => {
 
   return (
     <div
-      className={` max-h-80 ${theme === "dark" ? "bg-gray-800" : "bg-white"}`}
+      className={` max-h-80 mt-16 ${
+        theme === "dark" ? "bg-gray-800" : "bg-white"
+      }`}
       style={{ direction: i18n.language === "fa" ? "rtl" : "ltr" }}
     >
       {cartItemsComponent.length === 0 ? (
-        <article className="px-20 py-10 rounded-md ">
+        <article className="container px-20 py-10 rounded-md">
           <h2 className="p-2 mb-4 text-2xl font-bold text-red-500">
             {t("cart")}
             <span>({cartItemsComponent.length})</span>

@@ -8,26 +8,26 @@ import {
 const CartModal = ({ cartItems, onClose }) => {
   const [showModal, setShowModal] = useState(false);
   const [isOrderConfirmed, setIsOrderConfirmed] = useState(false);
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lng: string) => {
+    console.log(`Changing language to: ${lng}`);
+    i18n.changeLanguage(lng);
+  };
+  const { theme, toggleTheme } = useDarkMode();
 
   const handleOrder = () => {
     setShowModal(true);
     setIsOrderConfirmed(true);
   };
-  const { theme, toggleTheme } = useDarkMode();
+
   const handleCloseModal = () => {
     setShowModal(false);
     onClose();
   };
-  const { t, i18n } = useTranslation();
-
-  const changeLanguage = (lng: string) => {
-    console.log(`Changing language to: ${lng}`);
-    i18n.changeLanguage(lng);
-  };
 
   return (
     <div
-      className={`modal ${showModal ? "show" : "hide"}`}
+      className={`modal ${showModal ? "show" : "hide"} `}
       style={{ direction: i18n.language === "fa" ? "rtl" : "ltr" }}
     >
       {isOrderConfirmed && (
@@ -62,32 +62,29 @@ const CartModal = ({ cartItems, onClose }) => {
             <ul className="px-4">
               {cartItems
                 .reduce((uniqueItems, item) => {
-                  if (
-                    !uniqueItems.some(
-                      (uniqueItem) => uniqueItem.name === item.name
-                    )
-                  ) {
-                    uniqueItems.push(item);
+                  const existingItem = uniqueItems.find(
+                    (uniqueItem) => uniqueItem.name === item.name
+                  );
+                  if (existingItem) {
+                    existingItem.quantity += item.quantity;
+                  } else {
+                    uniqueItems.push({ ...item });
                   }
                   return uniqueItems;
                 }, [])
                 .map((uniqueItem, index) => {
-                  const itemCount = cartItems.filter(
-                    (cartItem) => cartItem.name === uniqueItem.name
-                  ).length;
-
                   return (
                     <li
                       key={index}
-                      className={`pb-4 mb-4  ${
+                      className={`pb-4 mb-4  ${
                         theme === "dark"
-                          ? "bg-gray-800"
+                          ? " bg-brown-700"
                           : "border-b bg-red-50 border-brown-100"
                       }`}
                     >
                       <span
-                        className={`block mb-2  ${
-                          theme === "dark" ? "text-brown-700" : "text-brown-900"
+                        className={`block mb-2 ${
+                          theme === "dark" ? "text-brown-900" : "text-brown-900"
                         }`}
                       >
                         {uniqueItem.name}
@@ -95,14 +92,16 @@ const CartModal = ({ cartItems, onClose }) => {
                       <img src={uniqueItem.img} alt="" />
                       <span
                         className={` ${
-                          theme === "dark" ? "text-brown-400" : "text-black"
+                          theme === "dark" ? "text-brown-900" : "text-black"
                         }`}
                       >
-                        {itemCount}x
+                        {uniqueItem.quantity}x
                       </span>
                       <span className="ml-4 font-light text-brown-500">
                         @ ${uniqueItem.price}
-                        <b className="ml-1">${itemCount * uniqueItem.price}</b>
+                        <b className="ml-1">
+                          ${uniqueItem.quantity * uniqueItem.price}
+                        </b>
                       </span>
                     </li>
                   );
@@ -121,7 +120,11 @@ const CartModal = ({ cartItems, onClose }) => {
                   theme === "dark" ? "text-brown-700" : "text-brown-900"
                 }`}
               >
-                ${cartItems.reduce((total, item) => total + item.price, 0)}
+                $
+                {cartItems.reduce(
+                  (total, item) => total + item.price * item.quantity,
+                  0
+                )}
               </p>
             </div>
             <button
