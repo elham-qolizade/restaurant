@@ -58,11 +58,12 @@ const MenuList: React.FC = () => {
   const handleIncrement = (name: string) => {
     setCartItemsComponent((prevState) =>
       prevState.map((item) =>
-        item.name === name ? { ...item, quantity: item.quantity + 1 } : item
+        item.name === name
+          ? { ...item, quantity: Math.max(1, item.quantity + 1) }
+          : item
       )
     );
   };
-
   return (
     <div className={` ${theme === "dark" ? "bg-gray-900" : "bg-pink-100"}`}>
       <div className="container">
@@ -149,7 +150,10 @@ const MenuList: React.FC = () => {
                             setCartItemsComponent((prevState) =>
                               prevState.map((item) =>
                                 item.name === product.name.en
-                                  ? { ...item, quantity: item.quantity - 1 }
+                                  ? {
+                                      ...item,
+                                      quantity: Math.max(1, item.quantity - 1),
+                                    }
                                   : item
                               )
                             )
